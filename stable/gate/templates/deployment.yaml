@@ -21,6 +21,10 @@ spec:
         {{ toYaml .Values.pod.annotations | nindent 8 }}
         {{- end }}
     spec:
+      volumes:
+        - name: gate-pv-storage
+          persistentVolumeClaim:
+            claimName: gate-pv-claim
       serviceAccountName: {{ template "rbac.serviceAccountName" . }}
       containers:
       - name: gate
@@ -31,3 +35,6 @@ spec:
           containerPort: 3000
         env:
         {{- include "gate.env" . | nindent 8 }}
+        volumeMounts:
+        - mountPath: "/etc/openvpn/keys"
+          name: gate-pv-storage
